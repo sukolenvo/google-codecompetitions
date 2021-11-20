@@ -23,4 +23,5 @@ tasks.test {
   testLogging {
     events("skipped", "failed")
   }
+  maxHeapSize = "512m"
 }

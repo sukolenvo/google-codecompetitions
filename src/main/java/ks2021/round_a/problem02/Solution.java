@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -29,18 +30,25 @@ public class Solution {
       int lShapes = 0;
       for (Segment horizontal : horizontals) {
         for (Segment vertical : verticals) {
-          Optional<int[]> intersection = findIntersection(horizontal, vertical);
-          if (intersection.isEmpty()) {
-            continue;
-          }
-          lShapes += countLShapes(intersection.get()[0] - horizontal.startX + 1, intersection.get()[1] - vertical.startY + 1);
-          lShapes += countLShapes(intersection.get()[0] - horizontal.startX + 1, vertical.endY - intersection.get()[1] + 1);
-          lShapes += countLShapes(horizontal.endX - intersection.get()[0] + 1, intersection.get()[1] - vertical.startY + 1);
-          lShapes += countLShapes(horizontal.endX - intersection.get()[0] + 1, vertical.endY - intersection.get()[1] + 1);
+          lShapes += countLShapes(horizontal, vertical);
+          assert lShapes >= 0;
         }
       }
-      outputStream.write(String.format("Case #%d: %d%n", i + 1, lShapes).getBytes(StandardCharsets.UTF_8));
+      outputStream.write(String.format("Case #%d: %d\n", i + 1, lShapes).getBytes(StandardCharsets.UTF_8));
     }
+  }
+
+  int countLShapes(Segment horizontal, Segment vertical) {
+    Optional<int[]> intersection = findIntersection(horizontal, vertical);
+    if (intersection.isEmpty()) {
+      return 0;
+    }
+    int lShapes = 0;
+    lShapes += countLShapes(intersection.get()[0] - horizontal.startX + 1, intersection.get()[1] - vertical.startY + 1);
+    lShapes += countLShapes(intersection.get()[0] - horizontal.startX + 1, vertical.endY - intersection.get()[1] + 1);
+    lShapes += countLShapes(horizontal.endX - intersection.get()[0] + 1, intersection.get()[1] - vertical.startY + 1);
+    lShapes += countLShapes(horizontal.endX - intersection.get()[0] + 1, vertical.endY - intersection.get()[1] + 1);
+    return lShapes;
   }
 
   int countLShapes(int length1, int length2) {
@@ -50,7 +58,7 @@ public class Solution {
     return Math.min(length1 / 2, length2) - 1 + Math.min(length2 / 2, length1) - 1;
   }
 
-  private Optional<int[]> findIntersection(Segment horizontal, Segment vertical) {
+  Optional<int[]> findIntersection(Segment horizontal, Segment vertical) {
     assert horizontal.horizontal;
     assert !vertical.horizontal;
     if (horizontal.startY > vertical.endY || horizontal.startY < vertical.startY) {
@@ -62,7 +70,7 @@ public class Solution {
     return Optional.of(new int[]{vertical.startX, horizontal.startY});
   }
 
-  private List<Segment> readSegments(Scanner scanner) {
+  List<Segment> readSegments(Scanner scanner) {
     boolean[][] grid = readGrid(scanner);
     List<Segment> result = new ArrayList<>();
     for (int i = 0; i < grid.length; i++) {
@@ -121,7 +129,7 @@ public class Solution {
     return grid;
   }
 
-  private static class Segment {
+  static class Segment {
 
     int startX;
     int endX;
@@ -147,5 +155,33 @@ public class Solution {
       return segment;
     }
 
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      Segment segment = (Segment) o;
+      return startX == segment.startX && endX == segment.endX && startY == segment.startY && endY == segment.endY
+          && horizontal == segment.horizontal;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(startX, endX, startY, endY, horizontal);
+    }
+
+    @Override
+    public String toString() {
+      return "Segment{" +
+          "startX=" + startX +
+          ", endX=" + endX +
+          ", startY=" + startY +
+          ", endY=" + endY +
+          ", horizontal=" + horizontal +
+          '}';
+    }
   }
 }

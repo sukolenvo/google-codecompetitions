@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Scanner;
@@ -112,6 +114,29 @@ class Problem02Test {
           .containsExactlyInAnyOrder(Segment.createVertical(0, 1, 0),
               Segment.createVertical(3, 4, 0));
     }
+
+    @Test
+    void chessBoard() {
+      String input = "5 5\n"
+          + "1 0 1 0 1\n0 1 0 1 0\n1 0 1 0 1\n0 1 0 1 0\n1 0 1 0 1";
+      assertThat(new Solution().readSegments(new Scanner(input)))
+          .isEmpty();
+    }
+
+    @Test
+    void case1() {
+      String input = "2 40\n"
+          + "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1\n"
+          + "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1";
+      assertThat(new Solution().readSegments(new Scanner(input)))
+          .hasSize(6)
+          .contains(Segment.createHorizontal(36, 39, 0),
+              Segment.createHorizontal(36, 39, 1),
+              Segment.createVertical(0, 1, 36),
+              Segment.createVertical(0, 1, 37),
+              Segment.createVertical(0, 1, 38),
+              Segment.createVertical(0, 1, 39));
+    }
   }
 
   @Nested
@@ -126,19 +151,19 @@ class Problem02Test {
     @Test
     void cornerIntersection() {
       assertThat(new Solution().findIntersection(Segment.createHorizontal(0, 10, 0), Segment.createVertical(0, 10, 0)))
-          .contains(new int[] {0, 0});
+          .contains(new int[]{0, 0});
     }
 
     @Test
     void middleIntersection() {
       assertThat(new Solution().findIntersection(Segment.createHorizontal(0, 10, 4), Segment.createVertical(0, 10, 5)))
-          .contains(new int[] {5, 4});
+          .contains(new int[]{5, 4});
     }
 
     @Test
     void tShape() {
       assertThat(new Solution().findIntersection(Segment.createHorizontal(0, 10, 0), Segment.createVertical(0, 10, 5)))
-          .contains(new int[] {5, 0});
+          .contains(new int[]{5, 0});
     }
   }
 
@@ -174,5 +199,17 @@ class Problem02Test {
       assertThat(new Solution().countLShapes(Segment.createHorizontal(0, 6, 3), Segment.createVertical(0, 6, 3)))
           .isEqualTo(8);
     }
+  }
+
+  @Test
+  void testSet2() throws Exception {
+    try (InputStream input = getClass().getClassLoader().getResourceAsStream("ts1_input.txt");
+        InputStream expected = getClass().getClassLoader().getResourceAsStream("ts1_output.txt")) {
+      ByteArrayOutputStream result = new ByteArrayOutputStream();
+      new Solution().run(input, result);
+      assertThat(result.toString())
+          .isEqualTo(new String(expected.readAllBytes()));
+    }
+
   }
 }

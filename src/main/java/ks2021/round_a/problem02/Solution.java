@@ -64,7 +64,7 @@ public class Solution {
     if (horizontal.startY > vertical.endY || horizontal.startY < vertical.startY) {
       return Optional.empty();
     }
-    if (vertical.startX > horizontal.endX || vertical.startY < horizontal.startX) {
+    if (vertical.startX > horizontal.endX || vertical.startX < horizontal.startX) {
       return Optional.empty();
     }
     return Optional.of(new int[]{vertical.startX, horizontal.startY});

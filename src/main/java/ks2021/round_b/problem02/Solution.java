@@ -31,7 +31,7 @@ public class Solution {
           .collect(Collectors.toList());
       assert a.size() == n;
       solver.a = a;
-      outputStream.write(String.format("Case #%d: %d%n", i + 1, solver.solve()).getBytes(StandardCharsets.UTF_8));
+      outputStream.write(String.format("Case #%d: %d\n", i + 1, solver.solve()).getBytes(StandardCharsets.UTF_8));
     }
   }
 
@@ -44,13 +44,13 @@ public class Solution {
       int start = 0;
       while (start < a.size() - 1) {
         int diff = a.get(start + 1) - a.get(start);
-        int end = start;
+        int end = start + 1;
         while (end < a.size() - 1 && a.get(end + 1) - a.get(end) == diff) {
           end ++;
         }
         int extraReplacement = Math.max(replaceStart(start, diff), replaceEnd(end, diff));
         maxLength = Math.max(maxLength, 1 + end - start + extraReplacement);
-        start = end + 1;
+        start = end;
       }
       return maxLength;
     }
@@ -63,12 +63,13 @@ public class Solution {
       int i = from - 2;
       while (i >= 0) {
         if (a.get(i) == last - diff) {
+          last = a.get(i);
           i--;
         } else {
-          return from - i + 1;
+          break;
         }
       }
-      return from - i;
+      return from - i - 1;
     }
 
     int replaceEnd(int from, int diff) {
@@ -80,12 +81,13 @@ public class Solution {
       int i = from + 2;
       while (i < a.size()) {
         if (a.get(i) == last + diff) {
+          last = a.get(i);
           i++;
         } else {
-          return i - from - 1;
+          break;
         }
       }
-      return i - from;
+      return i - from - 1;
     }
   }
 }
